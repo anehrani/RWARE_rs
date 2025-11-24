@@ -1,0 +1,8 @@
+[package]
+name = "warehouse_bots"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+warehouse_sim = { path = "../warehouse_sim" }
+rand = "0.8"
