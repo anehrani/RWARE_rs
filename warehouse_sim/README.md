@@ -42,6 +42,11 @@ fn main() {
         Ok(_) => println!("Robot moved to {:?}", warehouse.robots[0].pos),
         Err(e) => println!("Error: {}", e),
     }
+
+
+
+
+    
 }
 ```
 

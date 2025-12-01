@@ -33,6 +33,8 @@ pub struct Warehouse {
     pub robots: Vec<Robot>,
     pub shelves: Vec<Shelf>,
     pub goals: Vec<Goal>,
+    /// Global simulation clock tracking the current time step
+    pub clock: usize,
 }
 
 impl Warehouse {
@@ -44,7 +46,23 @@ impl Warehouse {
             robots: Vec::new(),
             shelves: Vec::new(),
             goals: Vec::new(),
+            clock: 0,
         }
+    }
+
+    /// Advance the simulation clock by one step.
+    pub fn tick(&mut self) {
+        self.clock += 1;
+    }
+
+    /// Get the current simulation time.
+    pub fn current_time(&self) -> usize {
+        self.clock
+    }
+
+    /// Reset the clock to zero.
+    pub fn reset_clock(&mut self) {
+        self.clock = 0;
     }
 
     /// Add a robot to the warehouse.

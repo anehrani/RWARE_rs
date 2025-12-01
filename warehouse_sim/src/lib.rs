@@ -4,11 +4,13 @@ pub mod grid;
 pub mod entity;
 pub mod action;
 pub mod simulation;
+pub mod clock_sim;
 
 pub use crate::grid::Position;
 pub use crate::entity::{Warehouse, Robot, Shelf, Goal};
 pub use crate::action::Action;
 pub use crate::simulation::step;
+pub use crate::clock_sim::{step_with_clock, step_single_with_clock};
 
 #[cfg(test)]
 mod tests {
