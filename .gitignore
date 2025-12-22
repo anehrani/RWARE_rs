@@ -2,3 +2,4 @@
 # building files
 warehouse_sim/target/*
 warehouse_bots/target/*
+warehouse_rl/target/*
