@@ -1,4 +1,4 @@
-use warehouse_sim::{Warehouse, Robot, Shelf, Position, Action, step_with_clock};
+use warehouse_sim::{Warehouse, Robot, Shelf, Position, Action, Direction, step_with_clock};
 use rand::Rng;
 use std::collections::HashSet;
 
@@ -42,6 +42,7 @@ fn main() {
             warehouse.add_robot(Robot {
                 id: warehouse.robots.len(),
                 pos,
+                direction: Direction::North,
                 carrying: None,
             });
         }

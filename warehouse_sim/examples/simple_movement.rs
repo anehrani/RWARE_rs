@@ -1,4 +1,4 @@
-use warehouse_sim::{Warehouse, Robot, Position, Action, step};
+use warehouse_sim::{Warehouse, Robot, Position, Action, Direction, step};
 
 fn main() {
     println!("=== Simple Movement Example ===");
@@ -11,6 +11,7 @@ fn main() {
     warehouse.add_robot(Robot { 
         id: robot_id, 
         pos: Position::new(0, 0), 
+        direction: Direction::South,
         carrying: None 
     });
     

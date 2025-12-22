@@ -15,7 +15,7 @@ pub fn train<B: AutodiffBackend>(
 ) {
     let mut env = WarehouseEnv::new(10, 10, max_steps);
     let config = DqnModelConfig {
-        input_size: 4,
+        input_size: 41,
         hidden_size: 64,
         output_size: 4,
     };
@@ -53,7 +53,7 @@ pub fn train<B: AutodiffBackend>(
                 let state_tensor = Tensor::<B, 1>::from_data(
                     burn::tensor::TensorData::from(&states[..]), 
                     &device
-                ).reshape([batch_size, 4]);
+                ).reshape([batch_size, 41]);
                 let reward_tensor = Tensor::<B, 1>::from_data(
                     burn::tensor::TensorData::from(&rewards[..]), 
                     &device
@@ -61,7 +61,7 @@ pub fn train<B: AutodiffBackend>(
                 let next_state_tensor = Tensor::<B, 1>::from_data(
                     burn::tensor::TensorData::from(&next_states[..]), 
                     &device
-                ).reshape([batch_size, 4]);
+                ).reshape([batch_size, 41]);
                 let done_tensor = Tensor::<B, 1>::from_data(
                     burn::tensor::TensorData::from(&dones[..]), 
                     &device

@@ -1,4 +1,4 @@
-use warehouse_sim::{Warehouse, Robot, Shelf, Goal, Position, Action, step};
+use warehouse_sim::{Warehouse, Robot, Shelf, Goal, Position, Action, Direction, step};
 
 fn main() {
     println!("=== Pick and Place Example ===");
@@ -13,6 +13,7 @@ fn main() {
     warehouse.add_robot(Robot { 
         id: robot_id, 
         pos: Position::new(0, 0), 
+        direction: Direction::East,
         carrying: None 
     });
     

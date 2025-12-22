@@ -15,4 +15,14 @@ pub enum Action {
     Pick,
     /// Place the carried shelf onto a matching goal at the robot's position.
     Place,
+    
+    // --- New RWARE-style actions ---
+    /// Rotate the robot 90 degrees left.
+    TurnLeft,
+    /// Rotate the robot 90 degrees right.
+    TurnRight,
+    /// Move one cell forward in the direction the robot is facing.
+    Forward,
+    /// Pick up or place a shelf.
+    ToggleLoad,
 }

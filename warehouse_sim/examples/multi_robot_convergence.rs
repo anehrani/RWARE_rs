@@ -1,4 +1,4 @@
-use warehouse_sim::{Warehouse, Robot, Position, Action, step};
+use warehouse_sim::{Warehouse, Robot, Position, Action, Direction, step, step_with_clock};
 use rand::Rng;
 use std::{thread, time};
 
@@ -23,6 +23,7 @@ fn main() {
             warehouse.add_robot(Robot {
                 id: positions.len(), // Use 0-based index as ID
                 pos,
+                direction: Direction::North,
                 carrying: None,
             });
         }

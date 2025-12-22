@@ -46,12 +46,17 @@ pub fn step_single_with_clock(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Warehouse, Robot, Position, Action};
+    use crate::{Warehouse, Robot, Position, Action, Direction};
 
     #[test]
     fn test_clock_advances() {
         let mut warehouse = Warehouse::new(5, 5);
-        warehouse.add_robot(Robot { id: 0, pos: Position::new(1, 1), carrying: None });
+        warehouse.add_robot(Robot { 
+            id: 0, 
+            pos: Position::new(1, 1), 
+            direction: Direction::North,
+            carrying: None 
+        });
         
         assert_eq!(warehouse.current_time(), 0);
         
@@ -65,8 +70,18 @@ mod tests {
     #[test]
     fn test_simultaneous_actions() {
         let mut warehouse = Warehouse::new(5, 5);
-        warehouse.add_robot(Robot { id: 0, pos: Position::new(1, 1), carrying: None });
-        warehouse.add_robot(Robot { id: 1, pos: Position::new(3, 3), carrying: None });
+        warehouse.add_robot(Robot { 
+            id: 0, 
+            pos: Position::new(1, 1), 
+            direction: Direction::North,
+            carrying: None 
+        });
+        warehouse.add_robot(Robot { 
+            id: 1, 
+            pos: Position::new(3, 3), 
+            direction: Direction::North,
+            carrying: None 
+        });
         
         let actions = vec![
             (0, Action::MoveRight),

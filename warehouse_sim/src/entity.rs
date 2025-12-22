@@ -1,12 +1,14 @@
 //! Entity definitions for the warehouse simulation
 
 use crate::grid::Position;
+use crate::types::Direction;
 
 /// Represents a robot in the warehouse.
 #[derive(Debug, Clone)]
 pub struct Robot {
     pub id: usize,
     pub pos: Position,
+    pub direction: Direction,
     /// The id of the shelf the robot is currently carrying, if any.
     pub carrying: Option<usize>,
 }
@@ -115,7 +117,12 @@ impl Warehouse {
                 match char {
                     '.' => {},
                     'R' => {
-                        warehouse.add_robot(Robot { id: robot_id, pos, carrying: None });
+                        warehouse.add_robot(Robot { 
+                            id: robot_id, 
+                            pos, 
+                            direction: Direction::North,
+                            carrying: None 
+                        });
                         robot_id += 1;
                     },
                     'S' => {
