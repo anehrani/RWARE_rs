@@ -133,3 +133,85 @@ fn try_move(warehouse: &mut Warehouse, robot_idx: usize, new_pos: Position) -> R
     warehouse.robots[robot_idx].pos = new_pos;
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::entity::{Warehouse, Robot, Shelf, Goal};
+    use crate::grid::Position;
+    use crate::types::Direction;
+
+    #[test]
+    fn test_rotation_actions() {
+        let mut warehouse = Warehouse::new(3, 3);
+        warehouse.add_robot(Robot { id: 0, pos: Position::new(1, 1), direction: Direction::North, carrying: None });
+        
+        step(&mut warehouse, 0, Action::TurnRight).unwrap();
+        assert_eq!(warehouse.robots[0].direction, Direction::East);
+        
+        step(&mut warehouse, 0, Action::TurnLeft).unwrap();
+        assert_eq!(warehouse.robots[0].direction, Direction::North);
+    }
+
+    #[test]
+    fn test_forward_movement() {
+        let mut warehouse = Warehouse::new(3, 3);
+        warehouse.add_robot(Robot { id: 0, pos: Position::new(1, 1), direction: Direction::South, carrying: None });
+        
+        step(&mut warehouse, 0, Action::Forward).unwrap();
+        assert_eq!(warehouse.robots[0].pos, Position::new(1, 2));
+    }
+
+    #[test]
+    fn test_shelf_dynamics_unloaded() {
+        let mut warehouse = Warehouse::new(3, 3);
+        warehouse.add_robot(Robot { id: 0, pos: Position::new(0, 0), direction: Direction::East, carrying: None });
+        warehouse.add_shelf(Shelf { id: 10, pos: Position::new(1, 0) });
+        
+        // Unloaded robot CAN move under shelf
+        step(&mut warehouse, 0, Action::Forward).unwrap();
+        assert_eq!(warehouse.robots[0].pos, Position::new(1, 0));
+    }
+
+    #[test]
+    fn test_shelf_dynamics_loaded() {
+        let mut warehouse = Warehouse::new(3, 3);
+        warehouse.add_robot(Robot { id: 0, pos: Position::new(0, 0), direction: Direction::East, carrying: Some(1) });
+        warehouse.add_shelf(Shelf { id: 10, pos: Position::new(1, 0) });
+        
+        // Loaded robot CANNOT move through another shelf
+        let res = step(&mut warehouse, 0, Action::Forward);
+        assert!(res.is_err());
+        assert_eq!(warehouse.robots[0].pos, Position::new(0, 0));
+    }
+
+    #[test]
+    fn test_toggle_load_flow() {
+        let mut warehouse = Warehouse::new(3, 3);
+        warehouse.add_robot(Robot { id: 0, pos: Position::new(1, 1), direction: Direction::North, carrying: None });
+        warehouse.add_shelf(Shelf { id: 5, pos: Position::new(1, 1) });
+        warehouse.add_goal(Goal { id: 5, pos: Position::new(2, 2) });
+
+        // Pick
+        step(&mut warehouse, 0, Action::ToggleLoad).unwrap();
+        assert_eq!(warehouse.robots[0].carrying, Some(5));
+        assert_eq!(warehouse.shelves.len(), 0);
+
+        // Move to empty spot and drop (since it's not the goal)
+        warehouse.robots[0].pos = Position::new(0, 0);
+        step(&mut warehouse, 0, Action::ToggleLoad).unwrap();
+        assert_eq!(warehouse.robots[0].carrying, None);
+        assert_eq!(warehouse.shelves.len(), 1);
+        assert_eq!(warehouse.shelves[0].pos, Position::new(0, 0));
+
+        // Pick again
+        step(&mut warehouse, 0, Action::ToggleLoad).unwrap();
+        
+        // Move to goal and drop (delivery)
+        warehouse.robots[0].pos = Position::new(2, 2);
+        step(&mut warehouse, 0, Action::ToggleLoad).unwrap();
+        assert_eq!(warehouse.robots[0].carrying, None);
+        assert_eq!(warehouse.goals.len(), 0);
+        assert_eq!(warehouse.shelves.len(), 0); // Delivered shelf is removed from world in this model
+    }
+}

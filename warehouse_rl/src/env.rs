@@ -145,3 +145,64 @@ impl WarehouseEnv {
         (self.get_observation(), reward, done)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use warehouse_sim::Shelf;
+
+    #[test]
+    fn test_observation_size() {
+        let env = WarehouseEnv::new(10, 10, 100);
+        let obs = env.get_observation();
+        // 1 (carrying) + 4 (direction one-hot) + 9 (cells) * 4 (features per cell) = 1 + 4 + 36 = 41
+        assert_eq!(obs.len(), 41);
+    }
+
+    #[test]
+    fn test_observation_encoding_walls() {
+        // Create env where robot is at (0,0)
+        let mut env = WarehouseEnv::new(10, 10, 100);
+        env.warehouse.robots[0].pos = Position::new(0, 0);
+        env.warehouse.robots[0].direction = Direction::North;
+        
+        let obs = env.get_observation();
+        
+        // At (0,0), radius 1 (3x3 grid)
+        // Neighbors: (-1,-1), (0,-1), (1,-1), (-1,0), (0,0), (1,0), (-1,1), (0,1), (1,1)
+        // Walls are at: (-1,-1), (0,-1), (1,-1), (-1,0), (-1,1) -> 5 cells
+        
+        // Count cells marked as walls (first feature in cell is 1.0)
+        let mut wall_count = 0;
+        for i in 0..9 {
+            let offset = 5 + i * 4;
+            if obs[offset] == 1.0 {
+                wall_count += 1;
+            }
+        }
+        assert_eq!(wall_count, 5);
+    }
+
+    #[test]
+    fn test_env_reward_movement() {
+        let mut env = WarehouseEnv::new(10, 10, 100);
+        env.warehouse.robots[0].pos = Position::new(5, 5);
+        env.warehouse.robots[0].direction = Direction::East;
+        env.target_pos = Position::new(7, 5);
+        
+        // Move Forward (to 6,5) -> gets closer
+        let (_, reward, _) = env.step(2); // 2 = Forward
+        assert!(reward > 0.0); // -0.1 (step) + 0.5 (closer) = 0.4
+    }
+
+    #[test]
+    fn test_env_reward_illegal() {
+        let mut env = WarehouseEnv::new(10, 10, 100);
+        env.warehouse.robots[0].pos = Position::new(0, 0);
+        env.warehouse.robots[0].direction = Direction::North;
+        
+        // Move Forward into wall
+        let (_, reward, _) = env.step(2);
+        assert!(reward < -1.0); // -0.1 (step) - 1.0 (illegal) = -1.1
+    }
+}
