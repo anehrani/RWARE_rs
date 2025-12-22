@@ -1,0 +1,15 @@
+[package]
+name = "warehouse_rl"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+warehouse_sim = { path = "../warehouse_sim" }
+burn = { version = "0.16", features = ["train", "wgpu", "autodiff"] }
+rand = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+derive_more = "0.99"
+config = "0.13"
+
+[dev-dependencies]
+tempfile = "3"
